@@ -7,11 +7,13 @@ class VertexIndex {
    
    private static final Map<Integer, VertexIndex> cache = new HashMap<>();
    
-   public final int value;
+   final int value;
+   
    private VertexIndex(int value) {
       this.value = value;
    }
-   public static VertexIndex from(int value) {
+   
+   static VertexIndex from(int value) {
       VertexIndex cached = cache.get(Integer.valueOf(value));
       if (cached != null)
          return cached;

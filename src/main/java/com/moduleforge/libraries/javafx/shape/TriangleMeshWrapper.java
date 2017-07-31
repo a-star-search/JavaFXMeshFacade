@@ -3,8 +3,11 @@ package com.moduleforge.libraries.javafx.shape;
 import java.util.Arrays;
 import java.util.List;
 
+import org.javatuples.Pair;
+
 import com.google.common.annotations.VisibleForTesting;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.TriangleMesh;
 
@@ -35,42 +38,62 @@ class TriangleMeshWrapper {
    }
 
    /*
-    * the order of the vertices is important because this order is saved as an index per vertex
-    * that is later used when setting up the faces
+    * the order of the vertices is important because this order is saved as an
+    * index per vertex that is later used when setting up the faces
     */
-   public static final TriangleMeshWrapper makeFrom(List<Point3D> vertices) {
+   static final TriangleMeshWrapper fromOrdered(List<Point3D> vertices) {
       TriangleMeshWrapper mesh = new TriangleMeshWrapper();
       mesh.setVertices(vertices);
       return mesh;
    }
 
+   static final TriangleMeshWrapper fromOrdered(List<Point3D> vertices, List<Point2D> textureVertices) {
+      TriangleMeshWrapper mesh = new TriangleMeshWrapper();
+      mesh.setVertices(vertices);
+      mesh.setTextureVertices(textureVertices);
+      return mesh;
+   }
+
    /*
-    * the order of the vertices is important because this order is saved as an index per vertex
-    * that is later used when setting up the faces
+    * the order of the vertices is important because this order is saved as an
+    * index per vertex that is later used when setting up the faces
     */
-   public static final TriangleMeshWrapper makeFrom(Point3D... vertices) {
+   static final TriangleMeshWrapper fromOrdered(Point3D... vertices) {
       TriangleMeshWrapper mesh = new TriangleMeshWrapper();
       mesh.setVertices(vertices);
       return mesh;
+   }
+
+   private void setTextureVertices(List<Point2D> vertices) {
+      float[] elements = new float[vertices.size() * 2];
+      int index = 0;
+      for (Point2D point : vertices) {
+         elements[index] = (float) point.getX();
+         index++;
+         elements[index] = (float) point.getY();
+         index++;
+      }
+      _delegate.getTexCoords().clear();
+      _delegate.getTexCoords().addAll(elements);
    }
 
    /*
     * the order of the faces is important
     */
-   public void setFaces(List<TriangleMeshFaceWrapper> faces) {
-      int[] array = makeCoordinateArrayFromTriangleMeshFaces(faces);
+   void setFaces(List<TriangleMeshFaceWrapper> faces) {
+      int[] array = makeCoordinateArrayFrom(faces);
       _delegate.getFaces().addAll(array);
    }
 
    private void setVertices(List<Point3D> vertices) {
       float[] elements = new float[vertices.size() * 3];
       int index = 0;
-      for(Point3D point : vertices) {
-         elements[index] = (float)point.getX();
+      for (Point3D point : vertices) {
+         elements[index] = (float) point.getX();
          index++;
-         elements[index] = (float)point.getY();
+         elements[index] = (float) point.getY();
          index++;
-         elements[index] = (float)point.getZ();
+         elements[index] = (float) point.getZ();
          index++;
       }
       _delegate.getPoints().addAll(elements);
@@ -81,21 +104,21 @@ class TriangleMeshWrapper {
    }
 
    @VisibleForTesting
-   static int[] makeCoordinateArrayFromTriangleMeshFaces(List<TriangleMeshFaceWrapper> faces) {
+   static int[] makeCoordinateArrayFrom(List<TriangleMeshFaceWrapper> faces) {
       int arraySize = TriangleMeshFaceWrapper.faceTotalCoordinateCount() * faces.size();
       int index = 0;
-      int[] array = new int[arraySize]; 
-      for(TriangleMeshFaceWrapper face: faces) {
-         for( VertexIndexPair vertex : face.getVertexIndexPairs()) {
-            array[index] = vertex.getIndex().value;
-            index++;  
-            array[index] = vertex.getTextureIndex().value;
-            index++;  
-         } 
+      int[] array = new int[arraySize];
+      for (TriangleMeshFaceWrapper face : faces) {
+         for (Pair<VertexIndex, VertexIndex> vertex : face.getVertexIndexPairs()) {
+            array[index] = vertex.getValue0().value;
+            index++;
+            array[index] = vertex.getValue1().value;
+            index++;
+         }
       }
       return array;
    }
-   
+
    private void applyDefaultTexture() {
       _delegate.getTexCoords().addAll(0, 0);
    }

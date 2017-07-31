@@ -22,7 +22,7 @@ public class GeometryUtil {
     * order
     * 
     */
-   public static Point3D calculateNormalVectorOfPlaneGivenByThreePoints(Point3D first, Point3D second, Point3D third) {
+   public static Point3D calculateNormalVectorOfPlaneGivenBy(Point3D first, Point3D second, Point3D third) {
 
       boolean twoOrMorePointsAreEqual = pointsAreEqual(first, second);
       twoOrMorePointsAreEqual |= pointsAreEqual(second, third);

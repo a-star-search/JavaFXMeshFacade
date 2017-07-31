@@ -1,7 +1,7 @@
 
 /**
  * 
- * Layer over JavaFX 3d ugly classes
+ * Layer over JavaFX 3D classes
  * 
  * @author Diego
  *

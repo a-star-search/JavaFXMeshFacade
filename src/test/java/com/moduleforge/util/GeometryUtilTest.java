@@ -20,7 +20,7 @@ public class GeometryUtilTest {
       Point3D pointB = new Point3D(-2, -2, 3);
       Point3D pointC = new Point3D(65, 2, 0);
 
-      Point3D normalVector = GeometryUtil.calculateNormalVectorOfPlaneGivenByThreePoints(pointA, pointB, pointC);
+      Point3D normalVector = GeometryUtil.calculateNormalVectorOfPlaneGivenBy(pointA, pointB, pointC);
 
       double x = normalVector.getX();
       double y = normalVector.getY();
@@ -39,7 +39,7 @@ public class GeometryUtilTest {
       Point3D pointB = new Point3D(-1, 2, 3);
       Point3D pointC = new Point3D(-1, 2, 3);
 
-      GeometryUtil.calculateNormalVectorOfPlaneGivenByThreePoints(pointA, pointB, pointC);
+      GeometryUtil.calculateNormalVectorOfPlaneGivenBy(pointA, pointB, pointC);
    }
 
    @Test
@@ -49,7 +49,7 @@ public class GeometryUtilTest {
       Point3D pointB = new Point3D(-1, 2, 3);
       Point3D pointC = new Point3D(-1, 2, (3.0+1e-6));
 
-      GeometryUtil.calculateNormalVectorOfPlaneGivenByThreePoints(pointA, pointB, pointC);
+      GeometryUtil.calculateNormalVectorOfPlaneGivenBy(pointA, pointB, pointC);
       
       return; //passes successfully with no exception
    }

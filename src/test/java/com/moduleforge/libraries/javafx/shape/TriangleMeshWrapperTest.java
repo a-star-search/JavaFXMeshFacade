@@ -1,15 +1,16 @@
 package com.moduleforge.libraries.javafx.shape;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.javatuples.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TriangleMeshWrapperTest {
 
    @Test
+   @SuppressWarnings("unchecked")
    public void testGetCoordinateArrayFromTriangleMeshFaces() {
       
       int[] expectedCoordinates = {
@@ -21,42 +22,42 @@ public class TriangleMeshWrapperTest {
                      4, 0, 3, 0, 1, 0}; // Bottom front face
       List<TriangleMeshFaceWrapper> faces = new ArrayList<>();
       
-      VertexIndexPair[] frontLeftFaceVertices = new VertexIndexPair[3];
-      frontLeftFaceVertices[0] = new VertexIndexPair(VertexIndex.from(0), VertexIndex.from(0));
-      frontLeftFaceVertices[1] = new VertexIndexPair(VertexIndex.from(2), VertexIndex.from(0));
-      frontLeftFaceVertices[2] = new VertexIndexPair(VertexIndex.from(1), VertexIndex.from(0));
-      TriangleMeshFaceWrapper frontLeftFace = TriangleMeshFaceWrapper.fromOrderedVertices(frontLeftFaceVertices);
+      Pair<VertexIndex, VertexIndex>[] frontLeftFaceVertices = new Pair[3];
+      frontLeftFaceVertices[0] = Pair.with(VertexIndex.from(0), VertexIndex.from(0));
+      frontLeftFaceVertices[1] = Pair.with(VertexIndex.from(2), VertexIndex.from(0));
+      frontLeftFaceVertices[2] = Pair.with(VertexIndex.from(1), VertexIndex.from(0));
+      TriangleMeshFaceWrapper frontLeftFace = TriangleMeshFaceWrapper.fromOrdered(frontLeftFaceVertices);
       
 
-      VertexIndexPair[] frontRightFaceVertices = new VertexIndexPair[3];
-      frontRightFaceVertices[0] = new VertexIndexPair(VertexIndex.from(0), VertexIndex.from(0));
-      frontRightFaceVertices[1] = new VertexIndexPair(VertexIndex.from(1), VertexIndex.from(0));
-      frontRightFaceVertices[2] = new VertexIndexPair(VertexIndex.from(3), VertexIndex.from(0));
-      TriangleMeshFaceWrapper frontRightFace = TriangleMeshFaceWrapper.fromOrderedVertices(frontRightFaceVertices);
+      Pair<VertexIndex, VertexIndex>[] frontRightFaceVertices = new Pair[3];
+      frontRightFaceVertices[0] = Pair.with(VertexIndex.from(0), VertexIndex.from(0));
+      frontRightFaceVertices[1] = Pair.with(VertexIndex.from(1), VertexIndex.from(0));
+      frontRightFaceVertices[2] = Pair.with(VertexIndex.from(3), VertexIndex.from(0));
+      TriangleMeshFaceWrapper frontRightFace = TriangleMeshFaceWrapper.fromOrdered(frontRightFaceVertices);
 
-      VertexIndexPair[] backRightFaceVertices = new VertexIndexPair[3];
-      backRightFaceVertices[0] = new VertexIndexPair(VertexIndex.from(0), VertexIndex.from(0));
-      backRightFaceVertices[1] = new VertexIndexPair(VertexIndex.from(3), VertexIndex.from(0));
-      backRightFaceVertices[2] = new VertexIndexPair(VertexIndex.from(4), VertexIndex.from(0));
-      TriangleMeshFaceWrapper backRightFace = TriangleMeshFaceWrapper.fromOrderedVertices(backRightFaceVertices);
+      Pair<VertexIndex, VertexIndex>[] backRightFaceVertices = new Pair[3];
+      backRightFaceVertices[0] = Pair.with(VertexIndex.from(0), VertexIndex.from(0));
+      backRightFaceVertices[1] = Pair.with(VertexIndex.from(3), VertexIndex.from(0));
+      backRightFaceVertices[2] = Pair.with(VertexIndex.from(4), VertexIndex.from(0));
+      TriangleMeshFaceWrapper backRightFace = TriangleMeshFaceWrapper.fromOrdered(backRightFaceVertices);
 
-      VertexIndexPair[] backLeftFaceVertices = new VertexIndexPair[3];
-      backLeftFaceVertices[0] = new VertexIndexPair(VertexIndex.from(0), VertexIndex.from(0));
-      backLeftFaceVertices[1] = new VertexIndexPair(VertexIndex.from(4), VertexIndex.from(0));
-      backLeftFaceVertices[2] = new VertexIndexPair(VertexIndex.from(2), VertexIndex.from(0));
-      TriangleMeshFaceWrapper backLeftFace = TriangleMeshFaceWrapper.fromOrderedVertices(backLeftFaceVertices);
+      Pair<VertexIndex, VertexIndex>[] backLeftFaceVertices = new Pair[3];
+      backLeftFaceVertices[0] = Pair.with(VertexIndex.from(0), VertexIndex.from(0));
+      backLeftFaceVertices[1] = Pair.with(VertexIndex.from(4), VertexIndex.from(0));
+      backLeftFaceVertices[2] = Pair.with(VertexIndex.from(2), VertexIndex.from(0));
+      TriangleMeshFaceWrapper backLeftFace = TriangleMeshFaceWrapper.fromOrdered(backLeftFaceVertices);
 
-      VertexIndexPair[] bottomRearFaceVertices = new VertexIndexPair[3];
-      bottomRearFaceVertices[0] = new VertexIndexPair(VertexIndex.from(4), VertexIndex.from(0));
-      bottomRearFaceVertices[1] = new VertexIndexPair(VertexIndex.from(1), VertexIndex.from(0));
-      bottomRearFaceVertices[2] = new VertexIndexPair(VertexIndex.from(2), VertexIndex.from(0));
-      TriangleMeshFaceWrapper bottomRearFace = TriangleMeshFaceWrapper.fromOrderedVertices(bottomRearFaceVertices);
+      Pair<VertexIndex, VertexIndex>[] bottomRearFaceVertices = new Pair[3];
+      bottomRearFaceVertices[0] = Pair.with(VertexIndex.from(4), VertexIndex.from(0));
+      bottomRearFaceVertices[1] = Pair.with(VertexIndex.from(1), VertexIndex.from(0));
+      bottomRearFaceVertices[2] = Pair.with(VertexIndex.from(2), VertexIndex.from(0));
+      TriangleMeshFaceWrapper bottomRearFace = TriangleMeshFaceWrapper.fromOrdered(bottomRearFaceVertices);
 
-      VertexIndexPair[] bottomFrontFaceVertices = new VertexIndexPair[3];
-      bottomFrontFaceVertices[0] = new VertexIndexPair(VertexIndex.from(4), VertexIndex.from(0));
-      bottomFrontFaceVertices[1] = new VertexIndexPair(VertexIndex.from(3), VertexIndex.from(0));
-      bottomFrontFaceVertices[2] = new VertexIndexPair(VertexIndex.from(1), VertexIndex.from(0));
-      TriangleMeshFaceWrapper bottomFrontFace = TriangleMeshFaceWrapper.fromOrderedVertices(bottomFrontFaceVertices);
+      Pair<VertexIndex, VertexIndex>[] bottomFrontFaceVertices = new Pair[3];
+      bottomFrontFaceVertices[0] = Pair.with(VertexIndex.from(4), VertexIndex.from(0));
+      bottomFrontFaceVertices[1] = Pair.with(VertexIndex.from(3), VertexIndex.from(0));
+      bottomFrontFaceVertices[2] = Pair.with(VertexIndex.from(1), VertexIndex.from(0));
+      TriangleMeshFaceWrapper bottomFrontFace = TriangleMeshFaceWrapper.fromOrdered(bottomFrontFaceVertices);
 
       faces.add(frontLeftFace);
       faces.add(frontRightFace);
@@ -64,10 +65,7 @@ public class TriangleMeshWrapperTest {
       faces.add(backLeftFace);
       faces.add(bottomRearFace);
       faces.add(bottomFrontFace);
-      int[] coordinates = TriangleMeshWrapper.makeCoordinateArrayFromTriangleMeshFaces(faces);
-      
-      System.out.println(Arrays.toString(coordinates));
-      System.out.println(Arrays.toString(expectedCoordinates));
+      int[] coordinates = TriangleMeshWrapper.makeCoordinateArrayFrom(faces);
       
       Assert.assertArrayEquals( expectedCoordinates, coordinates );
       
