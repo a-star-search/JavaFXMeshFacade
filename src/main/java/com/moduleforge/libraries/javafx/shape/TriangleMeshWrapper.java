@@ -11,6 +11,8 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.TriangleMesh;
 
+import static com.moduleforge.util.Util.toPrimitive;
+
 /*
  * 
  * This class is a wrapper of TriangleMesh, whose interface is too complex.
@@ -124,6 +126,12 @@ class TriangleMeshWrapper {
    }
 
    public final TriangleMesh toTriangleMesh() {
-      return this._delegate;
+      return _delegate;
+   }
+
+   public void applyFaceSmoothingGroups(List<Integer> faceSmoothingGroups) {
+      int[] arrFaceSmoothingGroups = 
+            toPrimitive(faceSmoothingGroups.toArray(new Integer[faceSmoothingGroups.size()]));
+      _delegate.getFaceSmoothingGroups().addAll(arrFaceSmoothingGroups);
    }
 }

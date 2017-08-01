@@ -31,6 +31,8 @@ public class TriangleMeshFace {
     */
    public static final float MINIMUM_VERTEX_DISTANCE = 1e-5f;
 
+   private static final List<Point2D> DEFAULT_TEXTURE_VERTICES = Arrays.asList(new Point2D(0.0f, 0.0f), new Point2D(0.0f, 1.0f), new Point2D(1.0f, 0.0f));
+
    /**
     * The list must be in order
     * 
@@ -59,6 +61,11 @@ public class TriangleMeshFace {
    
    private List<Point2D> textureVertices;
 
+   private TriangleMeshFace() {
+      textureVertices = new ArrayList<>();
+      verticesInOrder = new ArrayList<>();
+   }
+   
    /**
     * Ordered means that the counterclockwise direction of the vertices indicate
     * the side of the face
@@ -78,7 +85,7 @@ public class TriangleMeshFace {
 
       TriangleMeshFace face = new TriangleMeshFace();
       face.verticesInOrder = new ArrayList<>(vertices); // according to the javadoc the order is maintained
-      face.textureVertices = new ArrayList<>();
+      face.textureVertices.addAll(DEFAULT_TEXTURE_VERTICES);
       face.calculateFrontDirection();
       return face;
    }
@@ -91,6 +98,7 @@ public class TriangleMeshFace {
          throw new IllegalArgumentException();
       }
       TriangleMeshFace face = fromOrdered(vertices);
+      face.textureVertices.clear();
       face.textureVertices.addAll(textureVertices);
       return face;
    }

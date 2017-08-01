@@ -18,22 +18,25 @@ import javafx.scene.shape.TriangleMesh;
  * 
  * A more intuitive TriangleMesh than JavaFX's
  * 
- * Texture
- * =======
+ * Texture =======
  * 
- * Texture is intuitive and easy the understand. At least it would be if someone would have taken the time to explain it in
- * the javadoc.
+ * Texture is intuitive and easy the understand. At least it would be if someone
+ * would have taken the time to explain it in the javadoc.
  * 
- * A texture is given by a set of points in a bidimensional space of dimension one by one.
+ * A texture is given by a set of points in a bidimensional space of dimension
+ * one by one.
  * 
  * The texture points are added first to the mesh object.
  * 
- * Then on a second call to the method in which all points are added, sets of three texture points are matched with faces.
+ * Then on a second call to the method in which all points are added, sets of
+ * three texture points are matched with faces.
  * 
- * In that way, part of a bidimensional space is matched with the surface of the polygon. 
+ * In that way, part of a bidimensional space is matched with the surface of the
+ * polygon.
  * 
- * When the MeshView object is created and a material (that may contain an image) assigned to it, the material is matched
- * with the one by one texture space.
+ * When the MeshView object is created and a material (that may contain an
+ * image) assigned to it, the material is matched with the one by one texture
+ * space.
  * 
  */
 public class TriangleMeshFacade {
@@ -60,9 +63,18 @@ public class TriangleMeshFacade {
       List<Point2D> texturePoints = extractTexturePoints(faces);
       mesh.delegate = TriangleMeshWrapper.fromOrdered(apply(vertices, a -> a.getCoordinates()), texturePoints);
       mesh.vertexIdentifierToIndexMap = makeVertexIdentifierToIndexMap(apply(vertices, a -> a.getIdentifier()));
-      mesh.textureVertexToIndexMap = makeTextureVertexToIndexMap( texturePoints );
+      mesh.textureVertexToIndexMap = makeTextureVertexToIndexMap(texturePoints);
       mesh.setFaces(faces);
+      List<Integer> faceSmoothingGroups = new ArrayList<>();
+      for (int i = 0; i < faces.size(); i++) {
+         faceSmoothingGroups.add(0);
+      }
+      mesh.applyFaceSmoothingGroups(faceSmoothingGroups);
       return mesh;
+   }
+
+   private void applyFaceSmoothingGroups(List<Integer> faceSmoothingGroups) {
+      delegate.applyFaceSmoothingGroups(faceSmoothingGroups);
    }
 
    private static Map<Point2D, Integer> makeTextureVertexToIndexMap(List<Point2D> texturePoints) {
@@ -82,7 +94,8 @@ public class TriangleMeshFacade {
       return result;
    }
 
-   private static boolean checkSameVerticesInBothSets(Collection<Vertex> vertices, Collection<TriangleMeshFace> orderedFaces) {
+   private static boolean checkSameVerticesInBothSets(Collection<Vertex> vertices,
+         Collection<TriangleMeshFace> orderedFaces) {
       for (TriangleMeshFace face : orderedFaces) {
          Set<Vertex> faceVertices = face.getVertices();
          for (Vertex v : faceVertices) {
@@ -127,7 +140,7 @@ public class TriangleMeshFacade {
       }
 
       List<Point2D> textureVertices = face.getTextureVerticesWithCreationOrdering();
-      if(textureVertices.isEmpty()) {
+      if (textureVertices.isEmpty()) {
          return TriangleMeshFaceWrapper.fromOrderedNoTexture(vertexIndices);
       }
 
@@ -136,7 +149,7 @@ public class TriangleMeshFacade {
          int index = textureVertexToIndex(vertex);
          textureVertexIndices.add(VertexIndex.from(index));
       }
-      
+
       TriangleMeshFaceWrapper newFace = TriangleMeshFaceWrapper.fromOrdered(vertexIndices, textureVertexIndices);
       return newFace;
    }
