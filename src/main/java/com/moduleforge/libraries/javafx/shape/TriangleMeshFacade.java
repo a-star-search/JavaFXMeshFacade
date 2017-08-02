@@ -4,6 +4,7 @@ import static com.moduleforge.util.Util.apply;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,8 @@ public class TriangleMeshFacade {
 
    private Map<String, Integer> vertexIdentifierToIndexMap;
    private Map<Point2D, Integer> textureVertexToIndexMap;
+   private Set<TriangleMeshFace> _faces;
+   Set<Vertex> _vertices;
    private TriangleMeshWrapper delegate;
 
    private TriangleMeshFacade() {
@@ -59,7 +62,9 @@ public class TriangleMeshFacade {
       boolean sameVerticesInSets = checkSameVerticesInBothSets(vertices, faces);
       if (!sameVerticesInSets)
          throw new IllegalArgumentException();
+
       TriangleMeshFacade mesh = new TriangleMeshFacade();
+      mesh._vertices = new HashSet<>(vertices);
       List<Point2D> texturePoints = extractTexturePoints(faces);
       mesh.delegate = TriangleMeshWrapper.fromOrdered(apply(vertices, a -> a.getCoordinates()), texturePoints);
       mesh.vertexIdentifierToIndexMap = makeVertexIdentifierToIndexMap(apply(vertices, a -> a.getIdentifier()));
@@ -67,7 +72,7 @@ public class TriangleMeshFacade {
       mesh.setFaces(faces);
       List<Integer> faceSmoothingGroups = new ArrayList<>();
       for (int i = 0; i < faces.size(); i++) {
-         faceSmoothingGroups.add(0);
+         faceSmoothingGroups.add(Integer.valueOf(0));
       }
       mesh.applyFaceSmoothingGroups(faceSmoothingGroups);
       return mesh;
@@ -118,6 +123,7 @@ public class TriangleMeshFacade {
    }
 
    private void setFaces(Set<TriangleMeshFace> faces) {
+      _faces = new HashSet<>(faces);
       List<TriangleMeshFaceWrapper> llFaces = lowLevelFaceToHighLevelFace(new ArrayList<>(faces));
       delegate.setFaces(llFaces);
    }
@@ -167,4 +173,12 @@ public class TriangleMeshFacade {
       return delegate.toTriangleMesh();
    }
 
+   public Set<TriangleMeshFace> getFaces() {
+      return Collections.unmodifiableSet(_faces);
+   }
+
+   public Set<Vertex> getVertices() {
+      return Collections.unmodifiableSet(_vertices);
+   }
+   
 }

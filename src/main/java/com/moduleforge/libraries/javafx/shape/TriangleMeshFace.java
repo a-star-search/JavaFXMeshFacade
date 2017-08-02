@@ -181,7 +181,7 @@ public class TriangleMeshFace {
     * @return the list of vertices with the same ordering as when this object was
     *         created
     */
-   List<Vertex> getVerticesWithCreationOrdering() {
+   public List<Vertex> getVerticesWithCreationOrdering() {
       return Collections.unmodifiableList(verticesInOrder);
    }
 

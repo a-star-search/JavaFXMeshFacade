@@ -28,12 +28,24 @@ public class Vertex {
       return v;
    }
    
-   String getIdentifier() {
+   public String getIdentifier() {
       return identifier;
    }
    
-   Point3D getCoordinates() {
+   public Point3D getCoordinates() {
       return coordinates;
+   }
+   
+   public double getX() {
+      return coordinates.getX();
+   }
+   
+   public double getY() {
+      return coordinates.getY();
+   }
+   
+   public double getZ() {
+      return coordinates.getZ();
    }
    
    @Override 
