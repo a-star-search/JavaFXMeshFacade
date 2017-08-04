@@ -2,11 +2,12 @@ package com.moduleforge.util;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
 public class GeometryUtil {
 
-   private static final double SMALLEST_ACCEPTABLE_DELTA = 1e-8; // this is somewhat arbitrary
+   private static final double SMALLEST_ACCEPTABLE_DELTA = 1e-7;
    
    /**
     * Given three points it returns a vector that is normal to the plane that
@@ -51,6 +52,12 @@ public class GeometryUtil {
       double deltaZ = first.getZ() - second.getZ();
 
       return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ)) < SMALLEST_ACCEPTABLE_DELTA;
+   }
+
+   public static boolean almostEqual(Point2D first, Point2D second) {
+      Point3D first3D = new Point3D(first.getX(), first.getY(), 0f);
+      Point3D second3D = new Point3D(second.getX(), second.getY(), 0f);
+      return almostEqual(first3D, second3D );
    }
 
    public static boolean almostEqual(double a, double b) {
