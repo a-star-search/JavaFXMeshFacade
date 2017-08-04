@@ -6,6 +6,8 @@ import javafx.geometry.Point3D;
 
 public class GeometryUtil {
 
+   private static final double SMALLEST_ACCEPTABLE_DELTA = 1e-8; // this is somewhat arbitrary
+   
    /**
     * Given three points it returns a vector that is normal to the plane that
     * contains those points.
@@ -24,36 +26,35 @@ public class GeometryUtil {
     */
    public static Point3D calculateNormalVectorOfPlaneGivenBy(Point3D first, Point3D second, Point3D third) {
 
-      boolean twoOrMorePointsAreEqual = pointsAreEqual(first, second);
-      twoOrMorePointsAreEqual |= pointsAreEqual(second, third);
-      
-      if(twoOrMorePointsAreEqual)
+      boolean twoOrMorePointsAreEqual = almostEqual(first, second);
+      twoOrMorePointsAreEqual |= almostEqual(second, third);
+
+      if (twoOrMorePointsAreEqual)
          throw new IllegalArgumentException("At least two of the points were equal");
-      
-      
+
       Point3D vector1 = calculateVector(first, second);
       Point3D vector2 = calculateVector(first, third);
 
       Point3D normalVector = crossProduct(vector1, vector2);
       double vectorMagnitude = calculateVectorMagnitude(normalVector);
-      Point3D unitNormalVector = new Point3D(
-            normalVector.getX() / vectorMagnitude,
-            normalVector.getY() / vectorMagnitude,
-            normalVector.getZ() / vectorMagnitude );
+      Point3D unitNormalVector = new Point3D(normalVector.getX() / vectorMagnitude,
+            normalVector.getY() / vectorMagnitude, normalVector.getZ() / vectorMagnitude);
       return unitNormalVector;
    }
 
    /*
-    * better create my own method for this, 
-    * I don't trust javafx 3d api with much 
+    * better create my own method for this, I don't trust javafx 3d api with much
     */
-   private static boolean pointsAreEqual(Point3D first, Point3D second) {
-      double smallestAcceptableDelta = 1e-8; // this is somewhat arbitrary
+   private static boolean almostEqual(Point3D first, Point3D second) {
       double deltaX = first.getX() - second.getX();
       double deltaY = first.getY() - second.getY();
       double deltaZ = first.getZ() - second.getZ();
-      
-      return ((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ)) < (smallestAcceptableDelta * smallestAcceptableDelta); 
+
+      return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ)) < SMALLEST_ACCEPTABLE_DELTA;
+   }
+
+   public static boolean almostEqual(double a, double b) {
+      return Math.abs(a - b) < SMALLEST_ACCEPTABLE_DELTA;
    }
 
    @VisibleForTesting
@@ -85,7 +86,7 @@ public class GeometryUtil {
       double w1 = uy * vz - uz * vy;
       double w2 = vx * uz - vz * ux;
       double w3 = ux * vy - uy * vx;
-      
+
       return new Point3D(w1, w2, w3);
    }
 
@@ -99,5 +100,4 @@ public class GeometryUtil {
       double z = second.getZ() - first.getZ();
       return new Point3D(x, y, z);
    }
-
 }
