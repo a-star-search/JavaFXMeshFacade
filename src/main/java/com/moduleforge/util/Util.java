@@ -20,7 +20,7 @@ public class Util {
       }
       final int[] result = new int[array.length];
       for (int i = 0; i < array.length; i++) {
-         result[i] = array[i].intValue();
+         result[i] = array[i].intValue(); 
       }
       return result;
    }
