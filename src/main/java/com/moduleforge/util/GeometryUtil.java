@@ -13,7 +13,7 @@ public class GeometryUtil {
     * Given three points it returns a vector that is normal to the plane that
     * contains those points.
     * 
-    * IMPORTANT CONSIDERATIONS:
+    * IMPORTANT CONSIDERATIONS: 
     * 
     * 1) The value returned is a three dimensional point and the vector should be
     * understood to go from (0, 0, 0) to the point returned
