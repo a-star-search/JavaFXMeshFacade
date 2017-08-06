@@ -24,4 +24,8 @@ public class Util {
       }
       return result;
    }
+   
+   public static <T> void print(Collection<T> coll) {
+      coll.forEach((elem)->System.out.println(elem));
+   }
 }

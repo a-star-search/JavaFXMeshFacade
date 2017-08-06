@@ -1,6 +1,6 @@
 package com.moduleforge.libraries.javafx.shape;
 
-import static com.moduleforge.util.GeometryUtil.calculateNormalVectorOfPlaneGivenBy;
+import static com.moduleforge.libraries.geometry.GeometryUtil.calculateNormalVectorOfPlaneGivenBy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,10 +68,16 @@ public class TriangleMeshFace {
    
    /**
     * Ordered means that the counterclockwise direction of the vertices indicate
-    * the side of the face
+    * the side of the face.
     * 
-    * It doesn't make a difference if the elements are cycled (ie abc vs bca or
-    * cab)
+    * To be clear, 'ordered' in the method's name is redundant because a face is
+    * given by a set of vertices and the direction of the face. If the only
+    * argument are the vertices, it's obvious that they must also contain the 
+    * order. But better redundant than confusing.
+    * 
+    * It doesn't make a difference in how the face will eventually be 
+    * displayed on a screen if the elements are cycled (ie abc vs bca or
+    * cab).
     */
    public static TriangleMeshFace fromOrdered(List<Vertex> vertices) {
 
