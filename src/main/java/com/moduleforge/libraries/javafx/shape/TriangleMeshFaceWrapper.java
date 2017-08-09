@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-import com.moduleforge.util.Util;
+import com.moduleforge.libraries.util.Util;
 
 /*
  * We use lists in this class. Don't use collection because apparently the order in the vertices is important for the mesh

@@ -1,6 +1,7 @@
 package com.moduleforge.libraries.javafx.shape;
 
 import static com.moduleforge.libraries.geometry.GeometryUtil.calculateNormalVectorOfPlaneGivenBy;
+import static com.moduleforge.libraries.util.Util.apply;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.javatuples.Pair;
+
+import com.google.common.base.Preconditions;
+import com.moduleforge.libraries.geometry.GeometryUtil;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -23,15 +27,8 @@ import javafx.geometry.Point3D;
  */
 public class TriangleMeshFace {
 
-   /**
-    * A float has about 7 decimal digits. Some developers will use float for
-    * floating point numbers
-    * 
-    * This value is the minimum acceptable distante between two vertex
-    */
-   public static final float MINIMUM_VERTEX_DISTANCE = 1e-5f;
-
-   private static final List<Point2D> DEFAULT_TEXTURE_VERTICES = Arrays.asList(new Point2D(0.0f, 0.0f), new Point2D(0.0f, 1.0f), new Point2D(1.0f, 0.0f));
+   private static final List<Point2D> DEFAULT_TEXTURE_VERTICES = Arrays.asList(new Point2D(0.0f, 0.0f),
+         new Point2D(0.0f, 1.0f), new Point2D(1.0f, 0.0f));
 
    /**
     * The list must be in order
@@ -58,30 +55,74 @@ public class TriangleMeshFace {
     * 
     */
    private Point3D frontDirectionVector;
-   
+
    private List<Point2D> textureVertices;
 
    private TriangleMeshFace() {
       textureVertices = new ArrayList<>();
       verticesInOrder = new ArrayList<>();
    }
-   
+
+   /**
+    * The faces created are all connected to each other.
+    * 
+    * All the vertices must lay on the same plane. They must also have an ordering,
+    * so that the direction of the face can be stablished. As you can suppose all
+    * faces created in this way should face the same direction
+    * 
+    */
+   public static List<TriangleMeshFace> connectedFromOrdered(List<Vertex> verticesOnPlane) {
+
+      Preconditions.checkNotNull(verticesOnPlane);
+      if (verticesOnPlane.size() < TriangleMeshFaceWrapper.TRIANGLE_VERTEX_COUNT) {
+         throw new IllegalArgumentException("There should be a minimum of three vertices.");
+      }
+      boolean differentVertices = allVerticesAreDifferentEnough(verticesOnPlane);
+      if (!differentVertices) {
+         throw new IllegalArgumentException("Some of the vertices are equal or almost equal.");
+      }
+
+      List<Point3D> coordinatesOnPlane = apply(verticesOnPlane, a -> a.getCoordinates());
+      if (!GeometryUtil.inSamePlane(coordinatesOnPlane)) {
+         throw new IllegalArgumentException("The vertices do not lay on a plane.");
+      }
+
+      List<Vertex> verticesCopy = new ArrayList<>();
+      verticesCopy.addAll(verticesOnPlane);
+      List<TriangleMeshFace> faces = new ArrayList<>();
+      fromOrderedRecursive(verticesCopy, faces);
+      return faces;
+   }
+
+   private static void fromOrderedRecursive(List<Vertex> vertices, List<TriangleMeshFace> faces) {
+      List<Vertex> nextTriangle = Arrays.asList(new Vertex[] { vertices.get(0), vertices.get(1), vertices.get(2) });
+      TriangleMeshFace nextFace = fromOrderedTriplet(nextTriangle);
+      faces.add(nextFace);
+      boolean isTheLastTriangle = vertices.size() == TriangleMeshFaceWrapper.TRIANGLE_VERTEX_COUNT; 
+      if (isTheLastTriangle) {
+         return;
+      }
+      int indexSecondElement = 1;
+      vertices.remove(indexSecondElement); // The second element only belongs to the triangle just created
+      fromOrderedRecursive(vertices, faces);
+   }
+
    /**
     * Ordered means that the counterclockwise direction of the vertices indicate
     * the side of the face.
     * 
     * To be clear, 'ordered' in the method's name is redundant because a face is
     * given by a set of vertices and the direction of the face. If the only
-    * argument are the vertices, it's obvious that they must also contain the 
+    * argument are the vertices, it's obvious that they must also contain the
     * order. But better redundant than confusing.
     * 
-    * It doesn't make a difference in how the face will eventually be 
-    * displayed on a screen if the elements are cycled (ie abc vs bca or
-    * cab).
+    * It doesn't make a difference in how the face will eventually be displayed on
+    * a screen if the elements are cycled (ie abc vs bca or cab).
     */
-   public static TriangleMeshFace fromOrdered(List<Vertex> vertices) {
+   public static TriangleMeshFace fromOrderedTriplet(List<Vertex> vertices) {
 
-      if(vertices.size() != TriangleMeshFaceWrapper.TRIANGLE_VERTEX_COUNT) {
+      Preconditions.checkNotNull(vertices);
+      if (vertices.size() != TriangleMeshFaceWrapper.TRIANGLE_VERTEX_COUNT) {
          throw new IllegalArgumentException();
       }
       boolean differentVertices = allVerticesAreDifferentEnough(vertices);
@@ -97,13 +138,13 @@ public class TriangleMeshFace {
    }
 
    public static TriangleMeshFace fromOrdered(List<Vertex> vertices, List<Point2D> textureVertices) {
-      if(textureVertices.size() != vertices.size()) {
+      if (textureVertices.size() != vertices.size()) {
          throw new IllegalArgumentException();
       }
-      if(!textureVerticesWithinRange(textureVertices)) {
+      if (!textureVerticesWithinRange(textureVertices)) {
          throw new IllegalArgumentException();
       }
-      TriangleMeshFace face = fromOrdered(vertices);
+      TriangleMeshFace face = fromOrderedTriplet(vertices);
       face.textureVertices.clear();
       face.textureVertices.addAll(textureVertices);
       return face;
@@ -111,10 +152,10 @@ public class TriangleMeshFace {
 
    private static boolean textureVerticesWithinRange(List<Point2D> textureVertices) {
       for (Point2D p : textureVertices) {
-         if((p.getX() > 1) || (p.getX() < 0)) {
+         if ((p.getX() > 1) || (p.getX() < 0)) {
             return false;
          }
-         if((p.getY() > 1) || (p.getY() < 0)) {
+         if ((p.getY() > 1) || (p.getY() < 0)) {
             return false;
          }
       }
@@ -122,29 +163,18 @@ public class TriangleMeshFace {
    }
 
    /*
-    * if the vertices are as close to each other as the floating point type allows, that can bring some
-    * problems
+    * if the vertices are as close to each other as the floating point type allows,
+    * that can bring some problems
     */
    private static boolean allVerticesAreDifferentEnough(List<Vertex> vertices) {
-      
+
       for (int i = 0; i < vertices.size(); i++) {
          for (int j = i + 1; j < vertices.size(); j++) {
-            double firstPointX = vertices.get(i).getCoordinates().getX();
-            double secondPointX = vertices.get(j).getCoordinates().getX();
-            double xdelta = Math.abs(firstPointX - secondPointX);
-            
-            double firstPointY = vertices.get(i).getCoordinates().getY();
-            double secondPointY = vertices.get(j).getCoordinates().getY();
-            double ydelta = Math.abs(firstPointY - secondPointY);
-            
-            double firstPointZ = vertices.get(i).getCoordinates().getZ();
-            double secondPointZ = vertices.get(j).getCoordinates().getZ();
-            double zdelta = Math.abs(firstPointZ - secondPointZ);
-            
-            if(xdelta < MINIMUM_VERTEX_DISTANCE && ydelta < MINIMUM_VERTEX_DISTANCE && zdelta< MINIMUM_VERTEX_DISTANCE) {
+            Point3D outerLoopVertex = vertices.get(i).getCoordinates();
+            Point3D innerLoopVertex = vertices.get(j).getCoordinates();
+            if (!GeometryUtil.differentEnough(outerLoopVertex, innerLoopVertex)) {
                return false;
             }
-            
          }
       }
       return true;
@@ -159,15 +189,14 @@ public class TriangleMeshFace {
     */
    public static TriangleMeshFace fromOrdered(Vertex... vertices) {
       assert (vertices.length == TriangleMeshFaceWrapper.TRIANGLE_VERTEX_COUNT);
-      return fromOrdered(Arrays.asList(vertices)); // order is maintained
+      return fromOrderedTriplet(Arrays.asList(vertices)); // order is maintained
    }
 
    private void calculateFrontDirection() {
       Point3D firstPoint = verticesInOrder.get(0).getCoordinates();
       Point3D secondPoint = verticesInOrder.get(1).getCoordinates();
       Point3D thirdPoint = verticesInOrder.get(2).getCoordinates();
-      frontDirectionVector = 
-            calculateNormalVectorOfPlaneGivenBy(firstPoint, secondPoint, thirdPoint);
+      frontDirectionVector = calculateNormalVectorOfPlaneGivenBy(firstPoint, secondPoint, thirdPoint);
    }
 
    Set<Pair<Vertex, Vertex>> getVerticesOrder() {

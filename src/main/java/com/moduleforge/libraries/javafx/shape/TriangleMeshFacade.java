@@ -1,6 +1,6 @@
 package com.moduleforge.libraries.javafx.shape;
 
-import static com.moduleforge.util.Util.apply;
+import static com.moduleforge.libraries.util.Util.apply;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,6 +53,17 @@ public class TriangleMeshFacade {
       delegate = TriangleMeshWrapper.fromOrdered(new Point3D[0]);
    }
 
+
+   public static TriangleMeshFacade from(Set<TriangleMeshFace> faces) {
+      Set<Vertex> vertices = new HashSet<>();
+      for (TriangleMeshFace face : faces) {
+         vertices.addAll(face.getVertices());
+      }
+      
+      return TriangleMeshFacade.from(vertices, faces);
+   }
+   
+   
    /**
     * the vertices need not be in order
     * 

@@ -11,7 +11,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.TriangleMesh;
 
-import static com.moduleforge.util.Util.toPrimitive;
+import static com.moduleforge.libraries.util.Util.toPrimitive;
 
 /*
  * 
