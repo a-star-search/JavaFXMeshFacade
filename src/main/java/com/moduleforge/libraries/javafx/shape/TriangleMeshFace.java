@@ -1,6 +1,6 @@
 package com.moduleforge.libraries.javafx.shape;
 
-import static com.moduleforge.libraries.geometry.GeometryUtil.calculateNormalVectorOfPlaneGivenBy;
+import static com.moduleforge.libraries.geometry.GeometryUtil.calculateNormalOfPlaneGivenBy;
 import static com.moduleforge.libraries.util.Util.apply;
 
 import java.util.ArrayList;
@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
 
 import org.javatuples.Pair;
 
@@ -82,7 +85,7 @@ public class TriangleMeshFace {
          throw new IllegalArgumentException("Some of the vertices are equal or almost equal.");
       }
 
-      List<Point3D> coordinatesOnPlane = apply(verticesOnPlane, a -> a.getCoordinates());
+      List<Point3d> coordinatesOnPlane = apply(verticesOnPlane, a -> toPoint3d(a.getCoordinates()));
       if (!GeometryUtil.inSamePlane(coordinatesOnPlane)) {
          throw new IllegalArgumentException("The vertices do not lay on a plane.");
       }
@@ -172,7 +175,7 @@ public class TriangleMeshFace {
          for (int j = i + 1; j < vertices.size(); j++) {
             Point3D outerLoopVertex = vertices.get(i).getCoordinates();
             Point3D innerLoopVertex = vertices.get(j).getCoordinates();
-            if (!GeometryUtil.differentEnough(outerLoopVertex, innerLoopVertex)) {
+            if (!GeometryUtil.differentEnough(toPoint3d(outerLoopVertex), toPoint3d(innerLoopVertex))) {
                return false;
             }
          }
@@ -196,7 +199,9 @@ public class TriangleMeshFace {
       Point3D firstPoint = verticesInOrder.get(0).getCoordinates();
       Point3D secondPoint = verticesInOrder.get(1).getCoordinates();
       Point3D thirdPoint = verticesInOrder.get(2).getCoordinates();
-      frontDirectionVector = calculateNormalVectorOfPlaneGivenBy(firstPoint, secondPoint, thirdPoint);
+      Vector3d normal = calculateNormalOfPlaneGivenBy(toPoint3d(firstPoint), toPoint3d(secondPoint), toPoint3d(thirdPoint));
+      frontDirectionVector = new Point3D(normal.getX(), normal.getY(), normal.getZ()); 
+            
    }
 
    Set<Pair<Vertex, Vertex>> getVerticesOrder() {
@@ -258,6 +263,11 @@ public class TriangleMeshFace {
       inverted.verticesInOrder = verticesInOrder.stream().collect(Collectors.toList());
       Collections.reverse(inverted.verticesInOrder);
       return inverted;
+   }
+
+   private static Point3d toPoint3d(Point3D point) {
+      Point3d result = new Point3d(point.getX(), point.getY(), point.getZ());
+      return result;
    }
 
 }
